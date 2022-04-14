@@ -6,7 +6,7 @@ const InputFilter = (props) => {
                 type="text" 
                 name={props.name}
                 className="form-control" 
-                value={props.filters[props.name]} 
+                value={props.value} 
                 onChange={props.handleFilterChange}/>
     
 }

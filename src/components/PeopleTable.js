@@ -46,19 +46,15 @@ const PeopleTable = () => {
     return <>
             <table className="table table-stripped table-hover">
             <thead>
-            <tr>
-                    <th>Name</th>
-                    <th>Height</th>
-                    <th>Mass</th>
-                    <th>Created</th>
-                    <th>Edited</th>
-                    <th>Planet</th>
-                </tr><tr>
-                    <th><InputFilter name="name" handleFilterChange={handleFilterChange} filters={filters} /></th>
-                    <th><InputFilter name="height" handleFilterChange={handleFilterChange} filters={filters} /></th>
-                    <th><InputFilter name="mass" handleFilterChange={handleFilterChange} filters={filters} /></th>
-                    <th><InputFilter name="created" handleFilterChange={handleFilterChange} filters={filters} /></th>
-                    <th><InputFilter name="edited" handleFilterChange={handleFilterChange} filters={filters} /></th>
+                <tr>
+                    {Object.keys(filters).map((key, index) => {
+                        return <th key={index}>{key.charAt(0).toUpperCase() + key.slice(1)}</th>
+                    })}
+                </tr>
+                <tr>
+                    {Object.keys(filters).map((key, index) => {
+                        return <th key={index}><InputFilter name={key} handleFilterChange={handleFilterChange} value={filters[key]} /></th>
+                    })}
                     <th></th>
                 </tr>
             </thead>
