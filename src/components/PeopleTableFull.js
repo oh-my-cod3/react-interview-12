@@ -6,26 +6,36 @@ import PlanetModal from "./PlanetModal";
 
 
 /**
- * Scarica i dati della prima pagina e filtra sulla base dei dati scaricati
+ * A differenza del componente PeopleTable, questo gestisce la paginazione
+ * sfortunatamente la ricerca lato API viene fatta con un solo campo, quindi 
+ * risulta scomodo filtrare i dati per colonna.
+ * 
+ * Volendo filtrare per colonna si dovrebbe fare il mix dei due componenti:
+ * un loop con cui si scaricano tutte le pagine ([...data, response.results])
+ * e poi filtrare sull'array in locale, come nel componenente PeopleTable
  */
-const PeopleTable = () => {
+
+const PeopleTableFull = () => {
 
     const [filters, setFilters] = useState(FILTERS)
-    const [people, setPeople] = useState([]);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [planetDetails, setPlanetDetails] = useState(null);
+    const [url, setUrl] = useState(URLS.people);
+    
 
     useEffect(() => {
 
-        axios.get(URLS.people).then(res => {
+        console.log(url)
 
-            setPeople(res.data.results)
-            setLoading(false)
+        axios.get(url).then(res => {
+            setData(res.data);
+            setLoading(false);
         })
 
         return () => {}
-    }, [])
+    }, [url])
 
     const handleFilterChange = (e) => {
         setFilters((oldFilters) => {
@@ -63,7 +73,7 @@ const PeopleTable = () => {
                 </tr>
             </thead>
             <tbody>
-                {people.filter((person, index) => {
+                {data.results.filter((person, index) => {
 
                     return Object.keys(filters).every(filter => {
                         return person[filter].toLowerCase().includes(filters[filter]);
@@ -80,10 +90,23 @@ const PeopleTable = () => {
                     </tr>
                 })}
             </tbody>
+            <tfoot>
+                <tr>
+                    {/* Gestione paginazione */}
+                    <td colSpan={3} style={{textAlign: "left"}}>
+                        {data.previous && <button className="btn btn-sm btn-warning" onClick={() => setUrl(data.previous)}>PREV</button>}
+                    </td>
+                    <td colSpan={3} style={{textAlign: "right"}}>
+                        {data.next && <button className="btn btn-sm btn-warning" onClick={() => {setUrl(data.next)}}>NEXT</button>}
+                    </td>
+                </tr>                
+            </tfoot>
         </table>
+
+        {/* Modal per dettagio pianeta */}
         {isOpen && <PlanetModal setIsOpen={setIsOpen} planetDetails={planetDetails} />}
     </>
     
 }
 
-export default PeopleTable;
+export default PeopleTableFull;
